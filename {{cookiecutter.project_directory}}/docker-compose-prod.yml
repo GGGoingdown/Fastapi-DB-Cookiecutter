@@ -1,0 +1,59 @@
+version: "3"
+services:
+  api:
+    container_name: "testing-api"
+    build:
+      context: .
+    volumes:
+      - ./app:/app/
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - 5050:8000
+    expose:
+      - 5050
+    env_file:
+      - ./env/.env.${ENVIRONMENT:-test}
+    command:
+      [
+        "uvicorn",
+        "app.main:app",
+        "--host=0.0.0.0",
+        "--port=8000",
+        "--reload"
+      ]
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "--fail",
+          "http://localhost:8000/health/"
+        ]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+
+  db:
+    image: postgres:13
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-test}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - ${POSTGRES_EXPOSE:-5432}:5432
+    expose:
+      - ${POSTGRES_EXPOSE:-5432}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USERNAME:-postgres}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
