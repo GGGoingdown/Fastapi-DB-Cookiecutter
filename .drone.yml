@@ -49,7 +49,7 @@ steps:
     - ln -s /opt/poetry/bin/poetry
     - poetry config virtualenvs.create false
     - cd /app
-    - pwd
+    - poetry install --no-root
     - ls -al
     # - bash -c "poetry install --no-root"
     # - chmod +x test.sh
