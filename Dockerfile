@@ -3,6 +3,7 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 # Set environment varibles
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONPATH "${PYTHONPATH}:/app/Testing-Project"
 ENV ENVIRONMENT TEST
 
 WORKDIR /app/
@@ -21,6 +22,6 @@ COPY ./pyproject.toml ./poetry.lock* /app/
 RUN bash -c "poetry install --no-root"
 
 # application
-COPY . .
+COPY . /app/
 
-RUN chmod +x test.sh
+RUN chmod +x /app/test.sh
