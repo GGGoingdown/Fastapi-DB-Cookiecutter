@@ -4,7 +4,9 @@ services:
     container_name: "fastapi-cookiecutter"
     build:
       context: .
-      dockerfile: ./dockerfiles/Dockerfile.test
+      dockerfile: ./dockerfiles/Dockerfile.dev
+    volumes:
+      - .:/app/
     restart: unless-stopped
     depends_on:
       - db
@@ -13,8 +15,8 @@ services:
     expose:
       - ${APPLICATION_PORT:-8000}
     env_file:
-      - ./env/.env.test
-    command: /app/script/start_test.sh
+      - ./env/.env.dev
+    command: /app/script/startup.sh
 
   db:
     image: postgres:13

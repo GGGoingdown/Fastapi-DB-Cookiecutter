@@ -17,9 +17,6 @@ class User(models.Model):
     roles: fields.ManyToManyRelation["Role"] = fields.ManyToManyField(
         "models.Role",
         related_name="users",
-        through="user_role",
-        forward_key="user_id",
-        backward_key="role_id",
         on_delete=fields.CASCADE,
     )
 

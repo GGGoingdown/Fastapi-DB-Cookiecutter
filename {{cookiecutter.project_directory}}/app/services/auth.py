@@ -7,7 +7,7 @@ from loguru import logger
 from datetime import datetime, timedelta
 
 # Application
-from app import repositories, utils
+from app import repositories, utils, exceptions
 from app.schemas import UserSchema, AuthSchema
 
 
@@ -85,15 +85,17 @@ class BaseAuthService:
 
 
 class AuthenticationService(BaseAuthService):
-    __slots__ = ("_user_repo", "_token_selector")
+    __slots__ = ("_user_repo", "_token_selector", "_auth_cache")
 
     def __init__(
         self,
         user_repo: repositories.UserRepo,
         token_selector: TokenSelector,
+        auth_cache: repositories.AuthCache,
     ) -> None:
         self._user_repo = user_repo
         self._token_selector = token_selector
+        self._auth_cache = auth_cache
 
     async def authenticate_user(self, email: str, password: str) -> UserSchema.UserInDB:
         if (user := await self._user_repo.get_by_mail(email)) is None:
@@ -105,6 +107,15 @@ class AuthenticationService(BaseAuthService):
             raise self.invalid_username_or_password_exception
 
         return UserSchema.UserInDB.from_orm(user)
+
+    async def authenticate_active_token(self, token: str) -> int:
+        if user_id := await self._auth_cache.get_active_token(token):
+            return user_id
+        raise exceptions.ActiveTokenNotFoundError()
+
+    async def revoke_active_token(self, token: str):
+        res = await self._auth_cache.delete_active_token(token)
+        return res
 
     async def authenticate_jwt(
         self, security_scopes: SecurityScopes, token: str
@@ -135,16 +146,24 @@ class AuthenticationService(BaseAuthService):
 
 
 class AuthorizationService(BaseAuthService):
-    __slots__ = ("_token_selector",)
+    __slots__ = ("_token_selector", "_auth_cache")
 
     def __init__(
         self,
         token_selector: TokenSelector,
+        auth_cache: repositories.AuthCache,
     ) -> None:
         self._token_selector = token_selector
+        self._auth_cache = auth_cache
 
     def create_jwt_token(self, *, user_id: int, scopes: Iterable[str]) -> str:
         payload = AuthSchema.JWTPayload(sub=user_id, scopes=scopes).dict()
         expried_dt = self._token_selector.jwt.create_expired_time()
         payload.update({"exp": expried_dt})
         return self._token_selector.jwt.encode(payload)
+
+    async def save_active_token_in_cache(self, user_id: int) -> str:
+        state, token = await self._auth_cache.save_active_token(user_id)
+        if not state:
+            raise exceptions.CacheTokenError(state)
+        return token

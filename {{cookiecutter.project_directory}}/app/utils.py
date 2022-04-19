@@ -1,4 +1,5 @@
 import sys
+import shortuuid
 from loguru import logger
 from datetime import datetime
 
@@ -24,3 +25,7 @@ def get_utc_now() -> datetime:
 
 def dt_to_string(dt: datetime):
     return dt.strftime("%Y-%m-%dT%H:%M:%S")
+
+
+def get_shortuuid() -> str:
+    return shortuuid.uuid()

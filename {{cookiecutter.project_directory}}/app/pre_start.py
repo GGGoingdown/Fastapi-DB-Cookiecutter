@@ -3,8 +3,14 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 from loguru import logger
 
 # Application
-from app import db
+try:
+    from app import db
+except ModuleNotFoundError:
+    #! For cookiecutter testing
+    import sys
 
+    sys.path.append("/app/Testing-Project")
+    from app import db
 
 max_tries = 60 * 5  # 5 minutes
 wait_seconds = 1

@@ -2,6 +2,6 @@
 
 
 # Build
-docker-compose -f docker-compose-test.yml --env-file ./env/.env.test build --build-arg ENVIRONMENT=test
+docker-compose -f docker-compose-dev.yml --env-file ./env/.env.dev build --build-arg ENVIRONMENT=dev
 # Start
-docker-compose -f docker-compose-test.yml --env-file ./env/.env.test up -d
+docker-compose -f docker-compose-dev.yml --env-file ./env/.env.dev up -d

@@ -1,4 +1,4 @@
 #! /bin/bash
 
 # Shutdown
-docker-compose -f docker-compose-test.yml --env-file ./env/.env.test down -v
+docker-compose -f docker-compose-dev.yml --env-file ./env/.env.dev down -v

@@ -2,6 +2,9 @@
 
 set -e
 
+set -x
+
+
 # Link DB
 python ./app/pre_start.py
 
@@ -9,8 +12,8 @@ python ./app/pre_start.py
 aerich upgrade
 
 # Initial data
-python ./app/initial/initial_data.py
+python ./tests/initial_test_data.py
 
 
-# Uvicorn
-uvicorn app.main:app --host=0.0.0.0 --port=8000 --reload
+# Pytest
+pytest -p no:warnings

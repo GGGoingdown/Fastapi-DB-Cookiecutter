@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic, Type, Optional, Tuple
+from typing import TypeVar, Generic, Type, Optional, Tuple, Any
 from tortoise.models import Model
 from loguru import logger
 
@@ -13,6 +13,11 @@ class CRUDBase(Generic[ModelType]):
 
     def show_info(self, return_model: Type[ModelType]) -> None:
         logger.info(f"[{self.model.__name__}]::{return_model}")
+
+    async def create(self, **kwargs: Any) -> ModelType:
+        _model = await self.model.create(**kwargs)
+        self.show_info(_model)
+        return _model
 
     async def get(self, prefetch: Tuple[str] = None, **kwargs) -> Optional[ModelType]:
         if prefetch:

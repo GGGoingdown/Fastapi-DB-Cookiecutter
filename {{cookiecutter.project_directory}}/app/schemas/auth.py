@@ -15,3 +15,7 @@ class JWTTokenData(BaseModel):
 class LoginResponse(BaseModel):
     access_token: str
     token_type: str
+
+
+class SigninResponse(BaseModel):
+    active_token: str

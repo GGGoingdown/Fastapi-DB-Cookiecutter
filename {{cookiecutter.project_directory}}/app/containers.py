@@ -36,6 +36,11 @@ class Services(containers.DeclarativeContainer):
         expired_time_min=config.jwt.expire_min,
     )
 
+    auth_cache = providers.Singleton(
+        repositories.AuthCache,
+        redis_client=gateways.redis_client,
+    )
+
     # Services
     user_service = providers.Singleton(
         services.UserService,
@@ -44,14 +49,22 @@ class Services(containers.DeclarativeContainer):
         user_cache=user_cache,
     )
 
+    user_role_service = providers.Singleton(
+        services.UserRoleService,
+        user_role_repo=user_role_repo,
+    )
+
     authentication_service = providers.Singleton(
         services.AuthenticationService,
         user_repo=user_repo,
+        auth_cache=auth_cache,
         token_selector=token_selector,
     )
 
     authorization_service = providers.Singleton(
-        services.AuthorizationService, token_selector=token_selector
+        services.AuthorizationService,
+        auth_cache=auth_cache,
+        token_selector=token_selector,
     )
 
 

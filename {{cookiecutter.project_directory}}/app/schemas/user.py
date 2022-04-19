@@ -2,18 +2,28 @@ from pydantic import BaseModel, EmailStr, validator, Field
 from typing import List
 
 
-class BaseUser(BaseModel):
-    name: str
+class UserMail(BaseModel):
     email: EmailStr
+
+
+class BaseUser(UserMail):
+    name: str
 
 
 class UserCreate(BaseUser):
     password: str
+    verify_password: str
 
-    @validator("password")
+    @validator("password", "verify_password")
     def check_length(cls, v):
         if len(v) > 128:
             raise ValueError("Too many characters")
+        return v
+
+    @validator("verify_password")
+    def passwords_match(cls, v, values, **kwargs):
+        if "password" in values and v != values["password"]:
+            raise ValueError("passwords do not match")
         return v
 
 

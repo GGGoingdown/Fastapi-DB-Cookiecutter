@@ -3,6 +3,7 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 # Set environment varibles
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV ENVIRONMENT TEST
 
 WORKDIR /app/
 
@@ -15,17 +16,11 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
 # Copy poetry.lock* in case it doesn't exist in the repo
 COPY ./pyproject.toml ./poetry.lock* /app/
 
-ARG ENVIRONMENT=test
-RUN bash -c "if [ $ENVIRONMENT == "dev" ] || [ $ENVIRONMENT == "prod" ] ; then poetry install --no-root --no-dev; else poetry install --no-root; fi"
+
+
+RUN bash -c "poetry install --no-root"
+
 # application
-COPY ./app/ /app/app/
-# DB migration
-COPY ./migrations /app/migrations/
+COPY . .
 
-#! For testing only
-COPY ./tests/ /app/tests/
-
-# Start script
-COPY ./script/start_test.sh /app/script/
-
-RUN chmod +x /app/script/start_test.sh
+RUN chmod +x test.sh

@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "aerich" (
     "app" VARCHAR(100) NOT NULL,
     "content" JSONB NOT NULL
 );
-CREATE TABLE IF NOT EXISTS "user_role" (
-    "role_id" INT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE,
-    "user_id" UUID NOT NULL REFERENCES "roles" ("id") ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS "users_roles" (
+    "users_id" INT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE,
+    "role_id" UUID NOT NULL REFERENCES "roles" ("id") ON DELETE CASCADE
 );
