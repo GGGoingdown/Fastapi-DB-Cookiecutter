@@ -2,6 +2,9 @@ kind: pipeline
 type: docker
 name: main
 
+workspace:
+  path: /app
+
 environment:
   JWT_SECRET_KEY: "7112bddaeb56376344fcdb6b3275f3dd237a19e8aa60237dfdeec98d65a41d37"
   JWT_ALGORITHM: "HS256"
