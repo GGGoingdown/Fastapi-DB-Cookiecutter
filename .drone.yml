@@ -54,25 +54,25 @@ steps:
     - chmod +x test.sh
     - bash test.sh
 
-  # - name: telegram bot notification
-  #   image: appleboy/drone-telegram
-  #   when:
-  #     status:
-  #       - failure
-  #       - success
-  #   settings:
-  #     token:
-  #       from_secret: Telegram_gggoingdown_bot_token
-  #     to:
-  #       from_secret: Telegram_chat_id
-  #     message: >
-  #       {{#success build.status}}
-  #         Repository: {{repo.name}}
-  #         Test succeeded. Good job.
-  #       {{else}}
-  #         Repository: {{repo.name}}
-  #         Test failed. Fix me please.
-  #       {{/success}}
+  - name: telegram bot notification
+    image: appleboy/drone-telegram
+    when:
+      status:
+        - failure
+        - success
+    settings:
+      token:
+        from_secret: Telegram_gggoingdown_bot_token
+      to:
+        from_secret: Telegram_chat_id
+      message: >
+        {{#success build.status}}
+          Repository: {{repo.name}}
+          Test succeeded. Good job.
+        {{else}}
+          Repository: {{repo.name}}
+          Test failed. Fix me please.
+        {{/success}}
 
 services:
 - name: cache
