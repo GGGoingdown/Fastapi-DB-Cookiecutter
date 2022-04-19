@@ -10,10 +10,8 @@ environment:
   JWT_EXPIRE_TIME: 120
 
   POSTGRES_HOST: "db"
-  POSTGRES_USERNAME:
-    from_secret: POSTGRES_USERNAME
-  POSTGRES_PASSWORD:
-    from_secret: POSTGRES_PASSWORD
+  POSTGRES_USERNAME: postgres
+  POSTGRES_PASSWORD: postgres
   POSTGRES_PORT: 5432
   POSTGRES_DB: test
 
@@ -45,6 +43,8 @@ steps:
       PYTHONUNBUFFERED: 1
       PYTHONPATH: "${PYTHONPATH}:/app/Testing-Project"
       ENVIRONMENT: TEST
+      JWT_SECRET_KEY:
+        from_secret: JWT_SECRET_KEY
     commands:
     - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python
     - cd /usr/local/bin
@@ -85,10 +85,8 @@ services:
 - name: db
   image: postgres:13
   environment:
-    POSTGRES_USER:
-      from_secret: POSTGRES_USER
-    POSTGRES_PASSWORD:
-      from_secret: POSTGRES_PASSWORD
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
     POSTGRES_DB: test
 
 trigger:
