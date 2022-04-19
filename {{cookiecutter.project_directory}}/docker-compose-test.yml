@@ -9,9 +9,9 @@ services:
     depends_on:
       - db
     ports:
-      - ${APPLICATION_PORT:-8000}:8000
+      - ${APPLICATION_EXPOSE:-8000}:8000
     expose:
-      - ${APPLICATION_PORT:-8000}
+      - ${APPLICATION_EXPOSE:-8000}
     env_file:
       - ./env/.env.test
     command: /app/script/start_test.sh
