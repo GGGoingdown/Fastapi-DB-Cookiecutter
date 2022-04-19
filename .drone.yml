@@ -50,10 +50,8 @@ steps:
     - poetry config virtualenvs.create false
     - cd /app
     - poetry install --no-root
-    - ls -al
-    # - bash -c "poetry install --no-root"
-    # - chmod +x test.sh
-    # - bash test.sh
+    - chmod +x test.sh
+    - bash test.sh
 
   # - name: telegram bot notification
   #   image: appleboy/drone-telegram
