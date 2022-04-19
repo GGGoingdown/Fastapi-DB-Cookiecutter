@@ -6,14 +6,11 @@ workspace:
   path: /app
 
 environment:
-  JWT_SECRET_KEY: "7112bddaeb56376344fcdb6b3275f3dd237a19e8aa60237dfdeec98d65a41d37"
   JWT_ALGORITHM: "HS256"
   JWT_EXPIRE_TIME: 120
 
   POSTGRES_HOST: "db"
   POSTGRES_PORT: 5432
-  POSTGRES_USERNAME: postgres
-  POSTGRES_PASSWORD: postgres
   POSTGRES_DB: test
 
   REDIS_HOST: "cache"
@@ -44,6 +41,10 @@ steps:
       PYTHONUNBUFFERED: 1
       PYTHONPATH: "${PYTHONPATH}:/app/Testing-Project"
       ENVIRONMENT: TEST
+      JWT_SECRET_KEY:
+        from_secret: POSTGRES_USERNAME
+      POSTGRES_USERNAME:
+        from_secret: POSTGRES_PASSWORD
     commands:
     - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python
     - cd /usr/local/bin
@@ -84,8 +85,10 @@ services:
 - name: db
   image: postgres:13
   environment:
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: postgres
+    POSTGRES_USER:
+      from_secret: POSTGRES_USER
+    POSTGRES_PASSWORD:
+      from_secret: POSTGRES_PASSWORD
     POSTGRES_DB: test
 
 trigger:
