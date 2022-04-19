@@ -45,9 +45,11 @@ steps:
     - cd /usr/local/bin
     - ln -s /opt/poetry/bin/poetry
     - poetry config virtualenvs.create false
-    - bash -c "poetry install --no-root"
-    - chmod +x test.sh
-    - bash test.sh
+    - pwd
+    - ls -al
+    # - bash -c "poetry install --no-root"
+    # - chmod +x test.sh
+    # - bash test.sh
 
   # - name: telegram bot notification
   #   image: appleboy/drone-telegram
