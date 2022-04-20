@@ -24,7 +24,7 @@ COPY ./migrations /app/migrations/
 
 #! For testing only
 COPY ./tests/ /app/tests/
-COPY pytest.ini /app/app/
+COPY pytest.ini /app/
 
 # Start script
 COPY ./script/start_test.sh /app/script/

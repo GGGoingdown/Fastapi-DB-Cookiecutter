@@ -42,6 +42,8 @@ services:
       - ${POSTGRES_EXPOSE:-5432}:5432
     expose:
       - ${POSTGRES_EXPOSE:-5432}
+    volumes:
+      - db_data:/var/lib/postgresql/data/pgdata
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME}" ]
       interval: 10s
@@ -54,6 +56,8 @@ services:
     expose:
       - ${REDIS_EXPOSE:-6379}
     restart: unless-stopped
+    volumes:
+      - cache_data:/data
     command: >
       --requirepass ${REDIS_PASSWORD}
     healthcheck:

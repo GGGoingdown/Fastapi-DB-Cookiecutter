@@ -12,7 +12,7 @@ from tests import test_utils
 @pytest.mark.asyncio
 async def test_get_roles_in_db():
     for role in RoleEnum:
-        role_model = await models.Role.get(name=role)
+        role_model = await models.Role.filter(name=role).first()
         assert role_model.name == role.value, f"Get {role.value} failed"
 
 
