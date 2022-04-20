@@ -1,19 +1,21 @@
 version: "3"
 services:
   app:
-    container_name: "fastapi-cookiecutter"
     build:
       context: .
       dockerfile: ./dockerfiles/Dockerfile.test
     restart: unless-stopped
     depends_on:
       - db
+      - cache
     ports:
       - ${APPLICATION_EXPOSE:-8000}:8000
     expose:
       - ${APPLICATION_EXPOSE:-8000}
     env_file:
       - ./env/.env.test
+    environment:
+      - ENVIRONMENT=TEST
     command: /app/script/start_test.sh
 
   db:

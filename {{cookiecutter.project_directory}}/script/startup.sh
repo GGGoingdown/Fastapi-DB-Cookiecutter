@@ -10,5 +10,10 @@ aerich upgrade
 python ./app/initial/initial_data.py
 
 
-# Uvicorn
-uvicorn app.main:app --host=0.0.0.0 --port=8000 --reload
+if [[ "${ENVIRONMENT}" == "PROD" ]]; then
+    echo "Production Mode"
+    uvicorn app.main:app --host=0.0.0.0 --port=8000 --no-access-log
+else
+    echo "${ENVIRONMENT} Mode"
+    uvicorn app.main:app --host=0.0.0.0 --port=8000 --reload
+fi

@@ -26,7 +26,7 @@ __VERSION__ = "0.0.1"
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="FastAPI-Cookiecutter",
+        title="{{cookiecutter.project_name}}",
         version=__VERSION__,
         description="This project is create FastAPI template with Postgres DB",
     )

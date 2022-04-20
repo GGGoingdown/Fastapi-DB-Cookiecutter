@@ -1,13 +1,17 @@
-Fastapi-Cookiecutter
-
-
-### Test Locally
-1. Create '.env' file.
-2. Run docker command
+# FastAPI Cookiecutter
+### <b>Usage :</b>
+- JWT secret key  (HS256)
 ```
-# Build docker file
-docker build -t fastapi-cookiecutter .
-
-# Run test
-docker run --rm --enf-file .env fastapi-cookiecutter:latest bash test.sh
+openssl rand -hex 32
 ```
+- [Create Sentry project](https://sentry.io/)
+
+### <b>Content :</b>
+- FastAPI
+  - uvicorn
+  - gunicorn
+- Postgres
+  - tortoise-rom
+  - aerich
+- Redis
+  - aioredis
