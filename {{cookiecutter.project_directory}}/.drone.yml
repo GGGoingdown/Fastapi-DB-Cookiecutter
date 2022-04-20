@@ -1,0 +1,95 @@
+kind: pipeline
+type: docker
+name: main
+
+workspace:
+  path: /app
+
+environment:
+  JWT_ALGORITHM: "HS256"
+  JWT_EXPIRE_TIME: 120
+
+  POSTGRES_HOST: "db"
+  POSTGRES_USERNAME: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_PORT: 5432
+  POSTGRES_DB: test
+
+  REDIS_HOST: "cache"
+  REDIS_PORT: 6379
+  REDIS_EXPOSE: 6379
+  REDIS_USERNAME: default
+  REDIS_PASSWORD: redis_username
+  REDIS_BACKEND_DB: 0
+
+steps:
+  - name: redis health check
+    image: redis:6.2
+    commands:
+    - sleep 5
+    - redis-cli -h cache -a redis_username ping
+
+  - name: pg health check
+    image: postgres:13
+    commands:
+    - sleep 10
+    - pg_isready -h db -U $POSTGRES_USERNAME
+
+
+  - name: application testing
+    image: tiangolo/uvicorn-gunicorn-fastapi:python3.8
+    environment:
+      PYTHONDONTWRITEBYTECODE: 1
+      PYTHONUNBUFFERED: 1
+      ENVIRONMENT: TEST
+      JWT_SECRET_KEY:
+        from_secret: JWT_SECRET_KEY
+    commands:
+    - curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python
+    - cd /usr/local/bin
+    - ln -s /opt/poetry/bin/poetry
+    - poetry config virtualenvs.create false
+    - cd /app
+    - poetry install --no-root
+    - chmod +x test.sh
+    - bash test.sh
+
+  - name: telegram bot notification
+    image: appleboy/drone-telegram
+    when:
+      status:
+        - failure
+        - success
+    settings:
+      token:
+        from_secret: Telegram_gggoingdown_bot_token
+      to:
+        from_secret: Telegram_chat_id
+      message: >
+        {{#success build.status}}
+          Repository: {{repo.name}}
+          Test succeeded. Good job.
+        {{else}}
+          Repository: {{repo.name}}
+          Test failed. Fix me please.
+        {{/success}}
+
+services:
+- name: cache
+  image: redis:6.2
+  detach: true
+  commands:
+    - redis-server --requirepass redis_username
+
+- name: db
+  image: postgres:13
+  environment:
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_DB: test
+
+trigger:
+  branch:
+    - master
+    - test/*
+    - feature/*

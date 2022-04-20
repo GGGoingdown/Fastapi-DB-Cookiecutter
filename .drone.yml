@@ -41,7 +41,7 @@ steps:
     environment:
       PYTHONDONTWRITEBYTECODE: 1
       PYTHONUNBUFFERED: 1
-      PYTHONPATH: "${PYTHONPATH}:/app/Testing-Project"
+      PYTHONPATH: "${PYTHONPATH}:/app/Testing-Project"   # Cookiecutter create folder path
       ENVIRONMENT: TEST
       JWT_SECRET_KEY:
         from_secret: JWT_SECRET_KEY

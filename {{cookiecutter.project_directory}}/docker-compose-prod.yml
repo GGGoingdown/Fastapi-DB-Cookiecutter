@@ -1,28 +1,22 @@
 version: "3"
 services:
   api:
-    container_name: "testing-api"
     build:
       context: .
-    volumes:
-      - ./app:/app/
+      dockerfile: ./dockerfiles/Dockerfile.prod
     restart: unless-stopped
     depends_on:
       - db
+      - cache
     ports:
-      - 5050:8000
+      - ${APPLICATION_PORT:-8000}:8000
     expose:
-      - 5050
+      - ${APPLICATION_PORT:-8000}
     env_file:
-      - ./env/.env.${ENVIRONMENT:-test}
-    command:
-      [
-        "uvicorn",
-        "app.main:app",
-        "--host=0.0.0.0",
-        "--port=8000",
-        "--reload"
-      ]
+      - ./env/.env.prod
+    environment:
+      - ENVIRONMENT=PROD
+    command: /app/script/startup.sh
     healthcheck:
       test:
         [
@@ -40,20 +34,34 @@ services:
     image: postgres:13
     restart: unless-stopped
     environment:
-      - POSTGRES_USER=${POSTGRES_USERNAME:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
-      - POSTGRES_DB=${POSTGRES_DB:-test}
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
       - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
       - ${POSTGRES_EXPOSE:-5432}:5432
     expose:
       - ${POSTGRES_EXPOSE:-5432}
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USERNAME:-postgres}"
-        ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME}" ]
       interval: 10s
       timeout: 5s
       retries: 5
+  cache:
+    image: redis:6.2
+    ports:
+      - ${REDIS_EXPOSE:-6379}:6379
+    expose:
+      - ${REDIS_EXPOSE:-6379}
+    restart: unless-stopped
+    command: >
+      --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  cache_data: null
+  db_data: null
