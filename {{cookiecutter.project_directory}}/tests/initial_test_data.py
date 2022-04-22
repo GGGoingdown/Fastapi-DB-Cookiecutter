@@ -4,7 +4,7 @@ from loguru import logger
 from typing import Dict, Iterable
 
 # Application
-from app import db
+from app.containers import Application
 from app.models import User, Role
 from app.services import BaseAuthService
 from app.constants import RoleEnum
@@ -54,9 +54,9 @@ async def create_user(payload: Dict, roles: Iterable[RoleEnum]):
 
 
 @retry(stop=stop_after_attempt(max_tries), wait=wait_fixed(wait_seconds))
-async def connect():
+async def connect(container: Application):
     try:
-        await db.db_startup()
+        await container.gateways.db_resource.init()
 
     except Exception as e:
         logger.error(e)
@@ -64,9 +64,10 @@ async def connect():
 
 
 async def main():
+    container = Application()
     try:
         logger.info("--- Connect DB ---")
-        await connect()
+        await connect(container)
         # Create roles
         await create_roles()
         # Create fake users
@@ -78,7 +79,7 @@ async def main():
             await create_user(user_info, fake_user.role)
 
     finally:
-        await db.db_shutdown()
+        await container.gateways.db_resource.shutdown()
 
 
 if __name__ == "__main__":

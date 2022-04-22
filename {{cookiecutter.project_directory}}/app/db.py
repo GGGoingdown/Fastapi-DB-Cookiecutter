@@ -1,6 +1,8 @@
 import aioredis
-from typing import Dict
+from loguru import logger
+from typing import Dict, Any
 from tortoise import Tortoise, connections
+from dependency_injector import resources
 
 # from tortoise.contrib.fastapi import register_tortoise
 
@@ -46,9 +48,11 @@ def redis_init() -> aioredis:
     return redis_client
 
 
-async def db_startup(config: Dict = TORTOISE_ORM):
-    await Tortoise.init(config=config)
+class DBResource(resources.AsyncResource):
+    async def init(self, config: Dict = TORTOISE_ORM) -> None:
+        logger.info("--- Initialize DB resource ---")
+        await Tortoise.init(config=config)
 
-
-async def db_shutdown():
-    await connections.close_all()
+    async def shutdown(self, *args: Any, **kwargs: Any):
+        logger.info("--- Shutdown DB resource ---")
+        await connections.close_all()

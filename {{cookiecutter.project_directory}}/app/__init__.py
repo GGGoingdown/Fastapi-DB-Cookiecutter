@@ -81,17 +81,11 @@ def create_app() -> FastAPI:
     @app.on_event("startup")
     async def startup_event():
         logger.info("--- Startup Event ---")
-        app.container.services.init_resources()
-        from app import db
-
-        await db.db_startup()
+        await app.container.services.init_resources()
 
     @app.on_event("shutdown")
     async def shutdown_event():
         logger.info("--- Shutdown Event ---")
-        app.container.services.shutdown_resources()
-        from app import db
-
-        await db.db_shutdown()
+        await app.container.services.shutdown_resources()
 
     return app

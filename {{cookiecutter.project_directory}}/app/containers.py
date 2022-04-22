@@ -9,6 +9,8 @@ class Gateways(containers.DeclarativeContainer):
     config = providers.Configuration()
     redis_client = providers.Resource(db.redis_init)
 
+    db_resource = providers.Resource(db.DBResource, config=db.TORTOISE_ORM)
+
 
 class Services(containers.DeclarativeContainer):
     config = providers.Configuration()
