@@ -23,11 +23,12 @@ environment:
   REDIS_BACKEND_DB: 0
 
 steps:
-  - name: redis health check
-    image: redis:6.2
-    commands:
-    - sleep 5
-    - redis-cli -h cache -a redis_username ping
+  - name: waiton cache
+    image: akhenakh/drone-waiton:1.0
+    settings:
+      globaltimeout: 30s
+      urls:
+      - tcp://cache:6379
 
   - name: pg health check
     image: postgres:13
@@ -50,7 +51,7 @@ steps:
     - ln -s /opt/poetry/bin/poetry
     - poetry config virtualenvs.create false
     - cd /app
-    - poetry install --no-root
+    - poetry install
     - chmod +x ./script/start_test.sh
     - bash ./script/start_test.sh
 
