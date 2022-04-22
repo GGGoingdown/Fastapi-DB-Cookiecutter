@@ -9,6 +9,6 @@ docker-compose -f docker-compose-test.yml --env-file ./env/.env.test build --bui
 # Start
 docker-compose -f docker-compose-test.yml --env-file ./env/.env.test up -d
 # Show test log
-docker logs -f fastapi-cookiecutter
+docker logs -f cookiecutterproject_directory_app_1
 # Shutdown
 docker-compose -f docker-compose-test.yml --env-file ./env/.env.test down -v
