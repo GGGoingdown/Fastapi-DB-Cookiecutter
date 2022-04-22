@@ -30,11 +30,13 @@ steps:
       urls:
       - tcp://cache:6379
 
-  - name: pg health check
-    image: postgres:13
-    commands:
-    - sleep 10
-    - pg_isready -h db -U $POSTGRES_USERNAME
+  - name: waiton db
+    image: akhenakh/drone-waiton:1.0
+    settings:
+      globaltimeout: 30s
+      urls:
+      - tcp://db:5432
+
 
 
   - name: application testing
