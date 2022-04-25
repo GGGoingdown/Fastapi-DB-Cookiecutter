@@ -37,8 +37,6 @@ steps:
       urls:
       - tcp://db:5432
 
-
-
   - name: application testing
     image: tiangolo/uvicorn-gunicorn-fastapi:python3.8
     environment:
