@@ -9,11 +9,11 @@ wait_seconds = 1
 
 @retry(stop=stop_after_attempt(max_tries), wait=wait_fixed(wait_seconds))
 async def connect():
-    from app.containers import Application
-
-    container = Application()
-
     try:
+        from app.containers import Application
+
+        container = Application()
+
         await container.gateways.db_resource.init()
         conn = Tortoise.get_connection("default")
         logger.info(f"Ping -> {await conn.execute_query('SELECT 1')}")

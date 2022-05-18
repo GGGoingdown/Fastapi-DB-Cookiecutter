@@ -1,7 +1,7 @@
 from functools import lru_cache
 from enum import Enum
 from typing import Optional
-from pydantic import BaseSettings, Field, AnyUrl
+from pydantic import BaseSettings, Field
 
 # Log level
 class LogLevel(str, Enum):
@@ -32,7 +32,7 @@ class Application(BaseSettings):
 
 
 class SentryConfiguration(BaseSettings):
-    dns: Optional[AnyUrl] = Field(env="SENTRY_DNS")
+    dns: Optional[str] = Field(env="SENTRY_DNS")
     trace_sample_rates: Optional[float] = Field(1.0, env="SENTRY_TRACE_SAMPLE_RATE")
 
 
